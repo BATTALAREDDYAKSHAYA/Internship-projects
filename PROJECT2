@@ -1,5 +1,11 @@
 PROJECT2 NAME:IOT BASED SMART AGRICULTURE MONITORING 
-
+WORKING PRICIPLE:
+The Soil Moisture Sensor measures the moisture content in the soil by checking conductivity between its two probes.
+The DHT11 Sensor measures temperature and humidity from the surrounding environment.
+Both sensors are connected to the NodeMCU ESP8266, which collects the data.
+The NodeMCU connects to Wi-Fi and sends this data to the Blynk App (or any IoT dashboard).
+Users can monitor soil moisture, temperature, and humidity in real-time through their mobile app.
+Based on sensor readings, users can make informed decisions like turning ON/OFF irrigation systems manually or automatically through additional automation.
 Components:
 
 NodeMCU ESP8266
