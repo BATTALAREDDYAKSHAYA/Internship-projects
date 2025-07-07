@@ -1,0 +1,89 @@
+PROJECT 1 : SMART WATER LEVEL INDICATER 
+WORKING PRINCIPLE:
+The HC-SR04 Ultrasonic Sensor measures the water level in the tank by calculating the distance between the sensor (mounted at the top of the tank) and the water surface.
+Based on the distance, the Arduino. Displays the level on the LCD. Lights up different LEDs. Activates a buzzer if tank is full or nearly empty
+MATERIAL REQUIRED:
+| Component                        | Quantity |
+| -------------------------------- | -------- |
+| Arduino Uno                      | 1        |
+| Ultrasonic Sensor (HC-SR04)      | 1        |
+| Buzzer                           | 1        |
+| LED (Red, Yellow, Green)         | 3        |
+| 16x2 LCD Display (I2C preferred) | 1        |
+| Breadboard                       | 1        |
+| Jumper Wires                     | Many     |
+| Resistors (220Ω for LEDs)        | 3        |
+
+SOURCE CODE:
+#include <LiquidCrystal_I2C.h>
+// Initialize LCD with I2C address 0x27, 16 columns, 2 rows
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+// Pins
+const int trigPin = 9;
+const int echoPin = 10;
+const int greenLED = 2;
+const int yellowLED = 3;
+const int redLED = 4;
+const int buzzer = 5;
+// Tank height in cm
+const int tankHeight = 30;
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  lcd.begin();
+  lcd.backlight();
+  lcd.print(" Water Level:");
+  delay(2000);
+}
+void loop() {
+  long duration;
+  int distance;
+  // Trigger ultrasonic pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  // Read echo time
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2; // Convert to cm
+  int level = tankHeight - distance;
+  level = constrain(level, 0, tankHeight);
+  // Display on LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Level: ");
+  lcd.print(level);
+  lcd.print(" cm");
+  lcd.setCursor(0, 1);
+  // Control LEDs and buzzer
+  if (level >= 25) {
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(redLED, LOW);
+    digitalWrite(buzzer, HIGH);
+    lcd.print("Tank Full!");
+  } else if (level >= 10) {
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, HIGH);
+    digitalWrite(redLED, LOW);
+    digitalWrite(buzzer, LOW);
+    lcd.print("Mid Level");
+  } else {
+    digitalWrite(greenLED, LOW);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(redLED, HIGH);
+    digitalWrite(buzzer, HIGH);
+    lcd.print("Low Level!");
+  }
+
+  delay(1000);
+}
+
+
+OUPUT SCREENSHOT:
+
