@@ -52,3 +52,6 @@ BLYNK_WRITE(V1) {
 void loop() {
   Blynk.run();
 }
+
+CIRCUIT DIAGRAM:
+https://github.com/BATTALAREDDYAKSHAYA/Internship-projects/issues/4
