@@ -1,0 +1,78 @@
+PROJECT 5:SMART PARKING SYSTEM
+CODE:// Smart Parking System with Ultrasonic and IR Sensor
+
+// --- Libraries ---
+#include <LiquidCrystal.h>  // If using LCD
+
+// --- Pin Definitions ---
+const int trigPin = 9;
+const int echoPin = 10;
+const int irSensorPin = 2;
+
+int totalSlots = 1;
+int availableSlots = 1;
+
+// LCD Pins (RS, EN, D4, D5, D6, D7)
+LiquidCrystal lcd(7, 8, 4, 5, 6, 3);
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(irSensorPin, INPUT);
+
+  lcd.begin(16, 2);
+  lcd.print("Smart Parking");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+  // --- IR Sensor: Vehicle Entry/Exit Detection ---
+  int irState = digitalRead(irSensorPin);
+  if (irState == LOW) {  // IR sensor triggered
+    Serial.println("Vehicle detected at gate");
+    lcd.clear();
+    lcd.print("Vehicle at Gate");
+    delay(1500);
+  }
+
+  // --- Ultrasonic Sensor: Slot Occupancy ---
+  long duration, distance;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2; // in cm
+
+  // Threshold distance for detecting a car (adjust based on mounting height)
+  if (distance < 15) {
+    availableSlots = 0;
+  } else {
+    availableSlots = 1;
+  }
+
+  // --- Display Status ---
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Available: ");
+  lcd.print(availableSlots);
+
+  lcd.setCursor(0, 1);
+  if (availableSlots > 0) {
+    lcd.print("Slot Free");
+  } else {
+    lcd.print("Slot Occupied");
+  }
+
+  // Debug output
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  delay(1000);
+}
+OUTPUT PICTURE:
