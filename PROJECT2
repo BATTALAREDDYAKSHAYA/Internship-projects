@@ -61,7 +61,7 @@ void setup() {
   timer.setInterval(2000L, sendSensor);
 }
 CIRCUIT DIAGRAM:
-
+https://github.com/BATTALAREDDYAKSHAYA/Internship-projects/issues/2#issue-3207478166
 void loop() {
   Blynk.run();
   timer.run();
