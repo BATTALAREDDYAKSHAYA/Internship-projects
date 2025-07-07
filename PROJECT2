@@ -1,0 +1,63 @@
+PROJECT2 NAME:IOT BASED SMART AGRICULTURE MONITORING 
+
+Components:
+
+NodeMCU ESP8266
+Soil Moisture Sensor
+DHT11 Temperature & Humidity Sensor
+Jumper Wires
+Breadboard
+
+Connections:
+
+Soil Moisture Sensor → A0 pin of NodeMCU
+DHT11 Sensor:
+VCC → 3.3V
+GND → GND
+Data → D4 (GPIO2)
+NodeMCU powered via USB
+Blynk App communicates via Wi-Fi
+
+
+Arduino Code (with Blynk):
+
+#define BLYNK_TEMPLATE_ID "TMPL3pjO3CSYR"
+#define BLYNK_DEVICE_NAME "Smart Agriculture"
+#define BLYNK_AUTH_TOKEN "0u-JYFMpOOTqt6zBSXNycvvtGPlO98Id"
+
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+#include <DHT.h>
+
+char ssid[] = "NAGS_06";
+char pass[] = "87654321";
+
+#define DHTPIN D4
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
+
+BlynkTimer timer;
+
+void sendSensor() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  int soilMoisture = analogRead(A0);
+
+  Blynk.virtualWrite(V0, h); 
+  Blynk.virtualWrite(V1, t);
+  Blynk.virtualWrite(V2, soilMoisture);
+}
+
+void setup() {
+  Serial.begin(9600);
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+  dht.begin();
+  timer.setInterval(2000L, sendSensor);
+}
+CIRCUIT DIAGRAM:
+
+void loop() {
+  Blynk.run();
+  timer.run();
+}
+
