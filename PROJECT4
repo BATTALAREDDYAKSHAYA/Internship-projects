@@ -1,0 +1,76 @@
+PROJECT4:FIRE DETECTION SYSTEM
+
+Working Principle of IoT-Based Fire Detection System
+
+The IoT-Based Fire Detection System works by continuously monitoring the environment for signs of fire, smoke, or harmful gas using dedicated sensors. Here's a step-by-step explanation:
+1. Gas/Smoke Detection (MQ-2 Sensor)
+The MQ-2 Gas/Smoke Sensor detects gases like smoke, LPG, methane, etc.
+It provides a digital HIGH or LOW signal based on gas concentration.
+When smoke or gas exceeds a certain level, the sensor outputs LOW, triggering the alarm system.
+
+2. Temperature Monitoring (DHT11 Sensor)
+The DHT11 Temperature Sensor constantly reads the surrounding temperature.
+If the temperature exceeds a critical threshold (e.g., 50°C), the system assumes there is a potential fire.
+
+3. Alert Mechanism
+If either gas is detected (MQ-2) or high temperature is sensed (DHT11):
+The Buzzer turns ON, producing a loud sound to warn occupants.
+The LED turns ON as a visual alert.
+A message is sent via Blynk App or IFTTT, notifying the user on their smartphone.
+
+
+4. IoT Integration (Optional)
+The system connects to the Blynk App or other IoT platforms via Wi-Fi (if NodeMCU is used).
+Real-time alerts are sent to the user's mobile phone, even if they are not physically present.
+
+COMPONENTS:
+NodeMCU or Arduino UNO
+MQ-2 Gas/Smoke Sensor → Connect VCC to 3.3V/5V, GND to GND, DO to digital pin (e.g., D5)
+DHT11 Temperature Sensor → VCC to 3.3V/5V, GND to GND, Data to D6
+Buzzer & LED → Controlled via digital pins (e.g., D7 for buzzer, D8 for LED)
+Blynk App → Smartphone notifications via internet
+
+CODE:
+#include <DHT.h>
+#define DHTPIN D6      // DHT11 data pin
+#define DHTTYPE DHT11  // Define sensor type
+
+#define GAS_SENSOR_PIN D5
+#define BUZZER_PIN D7
+#define LED_PIN D8
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  dht.begin();
+  
+  pinMode(GAS_SENSOR_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+  float temperature = dht.readTemperature();
+  int gasValue = digitalRead(GAS_SENSOR_PIN);
+
+  Serial.print("Temperature: ");
+  Serial.println(temperature);
+  Serial.print("Gas Detected: ");
+  Serial.println(gasValue);
+
+  // If gas is detected or temperature exceeds limit
+  if (gasValue == LOW || temperature > 50) {  
+    digitalWrite(BUZZER_PIN, HIGH);
+    digitalWrite(LED_PIN, HIGH);
+    Serial.println("FIRE ALERT! Gas or High Temp Detected!");
+    // You can integrate Blynk or IFTTT alert here
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(LED_PIN, LOW);
+  }
+
+  delay(2000); // Check every 2 seconds
+}
+
+CIRCUIT DIAGRAM:
